@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>High and Low</title>
+</head>
+<body>
+    <h1>High and Low ゲーム</h1>
+
+    <p>コンピュータのカード: <%= computerCard %></p>
+
+    <% if (!playerCard) { %>
+        <form action="/highlow" method="get">
+            <input type="hidden" name="computerCard" value="<%= computerCard %>">
+            <input type="hidden" name="win" value="<%= win %>">
+            <input type="hidden" name="total" value="<%= total %>">
+            <label>
+                High or Low を選択してください:
+                <select name="Hi_L" required>
+                    <option value="0">High </option>
+                    <option value="1">Low </option>
+                </select>
+            </label>
+            <button type="submit">決定</button>
+        </form>
+    <% } else { %>
+        <p>あなたのカード: <%= playerCard %></p>
+        <p>あなたの選択: <%= playerChoiceText %></p>
+        <p>結果: <%= judgement %></p>
+        <p>勝利数: <%= win %></p>
+        <p>総プレイ数: <%= total %></p>
+
+        <form action="/highlow" method="get">
+            <button type="submit">もう一度プレイする</button>
+        </form>
+    <% } %>
+</body>
+</html>

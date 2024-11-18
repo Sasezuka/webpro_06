@@ -32,7 +32,6 @@ app.get("/janken", (req, res) => {
   let win = Number( req.query.win ) || 0;
   let total = Number( req.query.total ) || 0;
 
-  
   console.log( {hand, win, total});
   
   const num = Math.floor( Math.random() * 3 + 1 );
@@ -63,6 +62,97 @@ app.get("/janken", (req, res) => {
     total: total
   }
   res.render( 'janken', display );
+});
+
+
+app.get("/highlow", (req, res) => {
+  let Hi_L = req.query.Hi_L; // プレイヤーが選択した High (0) または Low (1)
+  let win = Number(req.query.win) || 0;
+  let total = Number(req.query.total) || 0;
+  let computerCard = req.query.computerCard; // コンピュータのカードを保持
+
+  if (!computerCard) {
+    // 初回リクエスト時にコンピュータのカードを生成
+    computerCard = Math.floor(Math.random() * 10 + 1);
+    return res.render('highlow', {
+      computerCard: computerCard,
+      playerCard: null,
+      playerChoice: null,
+      playerChoiceText: null,
+      judgement: null,
+      win: win,
+      total: total,
+    });
+  }
+  // プレイヤーが選択した後の処理
+  const playerCard = Math.floor(Math.random() * 10 + 1);
+  let judgement = '';
+  if (Hi_L == 0) {
+    // Highの処理
+    if (playerCard > computerCard) {
+      judgement = '勝ち';
+      win++;
+    } else if (playerCard === computerCard) {
+      judgement = '引き分け';
+    } else {
+      judgement = '負け';
+    }
+  } else {
+    // Lowの処理
+    if (playerCard < computerCard) {
+      judgement = '勝ち';
+      win++;
+    } else if (playerCard === computerCard) {
+      judgement = '引き分け';
+    } else {
+      judgement = '負け'
+    }
+  }
+  total++;
+
+  const display = {
+    computerCard: computerCard,
+    playerCard: playerCard,
+    playerChoice: Hi_L,
+    playerChoiceText: Hi_L == 0 ? 'High' : 'Low',
+    judgement: judgement,
+    win: win,
+    total: total,
+  };
+
+  res.render('highlow', display);
+});
+
+let targetNumber = Math.floor(Math.random() * 100) + 1; // グローバルに保持するランダムな数
+let attempts = 0; // グローバルに保持する試行回数
+
+app.get("/guess", (req, res) => {
+  const guess = Number(req.query.guess); // ユーザーの推測値
+  let message = ""; // 表示するメッセージ
+
+  if (!guess) {
+    // 初回アクセスまたは未入力
+    message = "1から100の数字を入力してください";
+  } else {
+    attempts++; // 推測がある場合のみ試行回数を増加
+
+    if (guess < targetNumber) {
+      message = "もっと大きい数です";
+    } else if (guess > targetNumber) {
+      message = "もっと小さい数です";
+    } else {
+      message = `正解！ ${attempts}回で当てました！ 新しいゲームを開始します。`;
+      // 新しいゲームのために状態をリセット
+      targetNumber = Math.floor(Math.random() * 100) + 1;
+      attempts = 0;
+    }
+  }
+
+  res.render("guess", {
+    message: message,
+    guess: guess || null,
+    attempts: attempts,
+  });
 });
 
 app.listen(8080, () => console.log("Example app listening on port 8080!"));
