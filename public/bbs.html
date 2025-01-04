@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>掲示板</title>
+  <script src="./bbs.js" defer></script>
+  <link rel="stylesheet" href="./bbs.css">
+</head>
+<body>
+  <h1>掲示板</h1>
+
+  <div id="bbs"></div>
+
+  <div id="post-form">
+    <label for="name">名前：</label>
+    <input type="text" id="name">
+    <label for="message">メッセージ：</label>
+    <input type="text" id="message">
+    <button type="button" id="post">送信</button>
+  </div>
+
+  <div id="check-form">
+    <button type="button" id="check">新しい投稿をチェック</button>
+    <select id="limit">
+      <option value="25" selected>25件</option>
+      <option value="50">50件</option>
+      <option value="100">100件</option>
+    </select>
+  </div>
+</body>
+</html>
