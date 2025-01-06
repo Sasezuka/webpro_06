@@ -1,0 +1,26 @@
+@startuml
+actor User
+participant Client as "Client\n(Java Script)"
+participant Server as "Server\n(Node.js + Express)"
+database Database as "Memory\n(メモリ内)"
+
+User -> Client: 投稿内容を入力
+Client -> Server: POST /post\n(name, message)
+Server -> Database: 新しい投稿を保存
+alt 投稿数がMAX_POSTSを超える場合
+    Database -> Database: 古い投稿を削除
+end
+Server -> Client: レスポンス\n(新しい投稿情報)
+Client -> User: メッセージフィールドをクリア
+
+User -> Client: 新しい投稿をチェック
+Client -> Server: POST /check
+Server -> Client: レスポンス\n(現在の投稿数)
+alt 投稿数が更新されている場合
+    Client -> Server: POST /read\n(limit)
+    Server -> Database: 指定された数の投稿を取得
+    Server -> Client: レスポンス\n(投稿データ)
+    Client -> User: 投稿を表示
+end
+
+@enduml
